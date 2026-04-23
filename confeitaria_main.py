@@ -16,37 +16,36 @@ ARQUIVO_RECEITAS = "confeitaria_receitas.json"
 # =========================
 
 def carregar_json(nome_arquivo):
-    
     try:
         if not os.path.exists(nome_arquivo):
             return {}
 
-        with open(nome_arquivo, "r") as f:
-            return json.load(f)
+        with open(nome_arquivo, "r") as arquivo:
+            return json.load(arquivo)
 
     except json.JSONDecodeError:
         console.print(f"[red]Erro: JSON inválido em {nome_arquivo}[/red]")
         return {}
 
-    except Exception as e:
-        console.print(f"[red]Erro ao carregar {nome_arquivo}: {e}[/red]")
+    except Exception as erro:
+        console.print(f"[red]Erro ao carregar {nome_arquivo}: {erro}[/red]")
         return {}
 
 
 def salvar_json(nome_arquivo, dados):
     try:
-        with open(nome_arquivo, "w") as f:
-            json.dump(dados, f, indent=4)
+        with open(nome_arquivo, "w") as arquivo:
+            json.dump(dados, arquivo, indent=4)
 
-    except Exception as e:
-        console.print(f"[red]Erro ao salvar {nome_arquivo}: {e}[/red]")
+    except Exception as erro:
+        console.print(f"[red]Erro ao salvar {nome_arquivo}: {erro}[/red]")
 
 
-def input_float(msg):
+def input_float(mensagem):
     while True:
         try:
-            valor = Prompt.ask(msg)
-            return float(valor.replace(",", "."))
+            valor_digitado = Prompt.ask(mensagem)
+            return float(valor_digitado.replace(",", "."))
         except ValueError:
             console.print("[red]Digite um número válido![/red]")
 
@@ -56,18 +55,18 @@ def input_float(msg):
 # =========================
 
 def mostrar_estoque(estoque):
-    table = Table(title="📦 Estoque")
-    table.add_column("Ingrediente", style="cyan")
-    table.add_column("Quantidade", style="magenta")
+    tabela = Table(title="📦 Estoque")
+    tabela.add_column("Ingrediente", style="cyan")
+    tabela.add_column("Quantidade", style="magenta")
 
     if not estoque:
         console.print("[yellow]Estoque vazio[/yellow]")
         return
 
-    for k, v in estoque.items():
-        table.add_row(k, str(v))
+    for ingrediente, quantidade in estoque.items():
+        tabela.add_row(ingrediente, str(quantidade))
 
-    console.print(table)
+    console.print(tabela)
 
 
 def menu_estoque():
@@ -81,58 +80,58 @@ def menu_estoque():
                 "3 - Remover quantidade\n"
                 "4 - Ver estoque\n"
                 "5 - Voltar",
-                title="📦 ESTOQUE",
+                title="ESTOQUE",
                 style="bold blue"
             ))
 
-            op = Prompt.ask("Escolha")
+            opcao = Prompt.ask("Escolha")
 
-            if op == "1":
-                nome = Prompt.ask("Ingrediente").strip().lower()
-                qtd = input_float("Quantidade")
+            if opcao == "1":
+                nome_ingrediente = Prompt.ask("Ingrediente").strip().lower()
+                quantidade = input_float("Quantidade")
 
-                estoque[nome] = estoque.get(nome, 0) + qtd
+                estoque[nome_ingrediente] = estoque.get(nome_ingrediente, 0) + quantidade
                 salvar_json(ARQUIVO_ESTOQUE, estoque)
                 console.print("[green]Adicionado![/green]")
 
-            elif op == "2":
-                nome = Prompt.ask("Ingrediente").strip().lower()
+            elif opcao == "2":
+                nome_ingrediente = Prompt.ask("Ingrediente").strip().lower()
 
-                if nome in estoque:
-                    del estoque[nome]
+                if nome_ingrediente in estoque:
+                    del estoque[nome_ingrediente]
                     salvar_json(ARQUIVO_ESTOQUE, estoque)
                     console.print("[red]Removido totalmente![/red]")
                 else:
                     console.print("[yellow]Não encontrado[/yellow]")
 
-            elif op == "3":
-                nome = Prompt.ask("Ingrediente").strip().lower()
+            elif opcao == "3":
+                nome_ingrediente = Prompt.ask("Ingrediente").strip().lower()
 
-                if nome in estoque:
-                    qtd = input_float("Quantidade para remover")
+                if nome_ingrediente in estoque:
+                    quantidade = input_float("Quantidade para remover")
 
-                    if qtd >= estoque[nome]:
-                        del estoque[nome]
+                    if quantidade >= estoque[nome_ingrediente]:
+                        del estoque[nome_ingrediente]
                         console.print("[red]Ingrediente zerado e removido![/red]")
                     else:
-                        estoque[nome] -= qtd
+                        estoque[nome_ingrediente] -= quantidade
                         console.print("[yellow]Quantidade atualizada![/yellow]")
 
                     salvar_json(ARQUIVO_ESTOQUE, estoque)
                 else:
                     console.print("[yellow]Não encontrado[/yellow]")
 
-            elif op == "4":
+            elif opcao == "4":
                 mostrar_estoque(estoque)
 
-            elif op == "5":
+            elif opcao == "5":
                 break
 
             else:
                 console.print("[yellow]Opção inválida[/yellow]")
 
-        except Exception as e:
-            console.print(f"[red]Erro no estoque: {e}[/red]")
+        except Exception as erro:
+            console.print(f"[red]Erro no estoque: {erro}[/red]")
 
 
 # =========================
@@ -144,15 +143,15 @@ def mostrar_receitas(receitas):
         console.print("[yellow]Nenhuma receita cadastrada[/yellow]")
         return
 
-    for nome, ingredientes in receitas.items():
-        table = Table(title=f"🍰 {nome}")
-        table.add_column("Ingrediente", style="cyan")
-        table.add_column("Quantidade", style="magenta")
+    for nome_receita, ingredientes in receitas.items():
+        tabela = Table(title=f"🍰 {nome_receita}")
+        tabela.add_column("Ingrediente", style="cyan")
+        tabela.add_column("Quantidade", style="magenta")
 
-        for ing, qtd in ingredientes.items():
-            table.add_row(ing, str(qtd))
+        for ingrediente, quantidade in ingredientes.items():
+            tabela.add_row(ingrediente, str(quantidade))
 
-        console.print(table)
+        console.print(tabela)
 
 
 def menu_receitas():
@@ -170,52 +169,52 @@ def menu_receitas():
                 style="bold green"
             ))
 
-            op = Prompt.ask("Escolha")
+            opcao = Prompt.ask("Escolha")
 
-            if op == "1":
-                nome = Prompt.ask("Nome da receita").strip().lower()
+            if opcao == "1":
+                nome_receita = Prompt.ask("Nome da receita").strip().lower()
 
-                if nome in receitas:
+                if nome_receita in receitas:
                     console.print("[yellow]Receita já existe[/yellow]")
                     continue
 
-                receita = {}
+                nova_receita = {}
 
                 while True:
-                    ing = Prompt.ask("Ingrediente (ou 'fim')").strip().lower()
+                    ingrediente = Prompt.ask("Ingrediente (ou 'fim')").strip().lower()
 
-                    if ing == "fim":
+                    if ingrediente == "fim":
                         break
 
-                    if ing in receita:
+                    if ingrediente in nova_receita:
                         console.print("[yellow]Ingrediente já existe na receita[/yellow]")
                         continue
 
-                    qtd = input_float("Quantidade")
-                    receita[ing] = qtd
+                    quantidade = input_float("Quantidade")
+                    nova_receita[ingrediente] = quantidade
 
-                receitas[nome] = receita
+                receitas[nome_receita] = nova_receita
                 salvar_json(ARQUIVO_RECEITAS, receitas)
                 console.print("[green]Receita criada![/green]")
 
-            elif op == "2":
-                nome = Prompt.ask("Receita").strip().lower()
+            elif opcao == "2":
+                nome_receita = Prompt.ask("Receita").strip().lower()
 
-                if nome in receitas:
-                    del receitas[nome]
+                if nome_receita in receitas:
+                    del receitas[nome_receita]
                     salvar_json(ARQUIVO_RECEITAS, receitas)
                     console.print("[red]Receita removida![/red]")
                 else:
                     console.print("[yellow]Não encontrada[/yellow]")
 
-            elif op == "3":
-                nome = Prompt.ask("Receita").strip().lower()
+            elif opcao == "3":
+                nome_receita = Prompt.ask("Receita").strip().lower()
 
-                if nome not in receitas:
+                if nome_receita not in receitas:
                     console.print("[red]Receita não existe[/red]")
                     continue
 
-                receita = receitas[nome]
+                receita = receitas[nome_receita]
 
                 console.print(Panel(
                     "1 - Remover ingrediente\n2 - Diminuir quantidade",
@@ -225,43 +224,43 @@ def menu_receitas():
                 escolha = Prompt.ask("Escolha")
 
                 if escolha == "1":
-                    ing = Prompt.ask("Ingrediente").strip().lower()
+                    ingrediente = Prompt.ask("Ingrediente").strip().lower()
 
-                    if ing in receita:
-                        del receita[ing]
+                    if ingrediente in receita:
+                        del receita[ingrediente]
                         console.print("[red]Ingrediente removido[/red]")
                     else:
                         console.print("[yellow]Não existe[/yellow]")
 
                 elif escolha == "2":
-                    ing = Prompt.ask("Ingrediente").strip().lower()
+                    ingrediente = Prompt.ask("Ingrediente").strip().lower()
 
-                    if ing in receita:
-                        qtd = input_float("Quantidade para remover")
+                    if ingrediente in receita:
+                        quantidade = input_float("Quantidade para remover")
 
-                        if qtd >= receita[ing]:
-                            del receita[ing]
+                        if quantidade >= receita[ingrediente]:
+                            del receita[ingrediente]
                             console.print("[red]Ingrediente removido da receita[/red]")
                         else:
-                            receita[ing] -= qtd
+                            receita[ingrediente] -= quantidade
                             console.print("[yellow]Quantidade atualizada[/yellow]")
                     else:
                         console.print("[yellow]Não existe[/yellow]")
 
-                receitas[nome] = receita
+                receitas[nome_receita] = receita
                 salvar_json(ARQUIVO_RECEITAS, receitas)
 
-            elif op == "4":
+            elif opcao == "4":
                 mostrar_receitas(receitas)
 
-            elif op == "5":
+            elif opcao == "5":
                 break
 
             else:
                 console.print("[yellow]Opção inválida[/yellow]")
 
-        except Exception as e:
-            console.print(f"[red]Erro nas receitas: {e}[/red]")
+        except Exception as erro:
+            console.print(f"[red]Erro nas receitas: {erro}[/red]")
 
 
 # =========================
@@ -273,29 +272,57 @@ def menu_producao():
         estoque = carregar_json(ARQUIVO_ESTOQUE)
         receitas = carregar_json(ARQUIVO_RECEITAS)
 
-        console.print(Panel("Produção", style="bold yellow"))
-
-        nome = Prompt.ask("Receita").strip().lower()
-
-        if nome not in receitas:
-            console.print("[red]Receita não encontrada![/red]")
+        if not receitas:
+            console.print("[yellow]Nenhuma receita cadastrada[/yellow]")
             return
 
-        receita = receitas[nome]
+        console.print(Panel("🍳 PRODUÇÃO - Escolha a receita", style="bold yellow"))
 
-        for ing, qtd in receita.items():
-            if estoque.get(ing, 0) < qtd:
-                console.print(f"[red]Falta {ing}![/red]")
+        lista_receitas = list(receitas.items())
+
+        for indice, (nome_receita, ingredientes) in enumerate(lista_receitas, start=1):
+            tabela = Table(title=f"{indice} - 🍰 {nome_receita}")
+            tabela.add_column("Ingrediente", style="cyan")
+            tabela.add_column("Quantidade", style="magenta")
+
+            for ingrediente, quantidade in ingredientes.items():
+                tabela.add_row(ingrediente, str(quantidade))
+
+            console.print(tabela)
+
+        escolha = Prompt.ask("\nDigite o número da receita")
+
+        if not escolha.isdigit():
+            console.print("[red]Digite um número válido![/red]")
+            return
+
+        indice_escolhido = int(escolha) - 1
+
+        if indice_escolhido < 0 or indice_escolhido >= len(lista_receitas):
+            console.print("[red]Opção inválida![/red]")
+            return
+
+        nome_receita, receita = lista_receitas[indice_escolhido]
+
+        quantidade_producao = input_float("Quantas unidades deseja produzir?")
+
+        if quantidade_producao <= 0:
+            console.print("[red]Quantidade inválida![/red]")
+            return
+
+        for ingrediente, quantidade in receita.items():
+            if estoque.get(ingrediente, 0) < quantidade * quantidade_producao:
+                console.print(f"[red]Falta {ingrediente}! Necessário: {quantidade * quantidade_producao}[/red]")
                 return
 
-        for ing, qtd in receita.items():
-            estoque[ing] -= qtd
+        for ingrediente, quantidade in receita.items():
+            estoque[ingrediente] -= quantidade * quantidade_producao
 
         salvar_json(ARQUIVO_ESTOQUE, estoque)
-        console.print("[green]Produção concluída![/green]")
+        console.print(f"[green]Produção de {quantidade_producao}x '{nome_receita}' concluída![/green]")
 
-    except Exception as e:
-        console.print(f"[red]Erro na produção: {e}[/red]")
+    except Exception as erro:
+        console.print(f"[red]Erro na produção: {erro}[/red]")
 
 
 # =========================
@@ -311,15 +338,15 @@ def main():
                 style="bold magenta"
             ))
 
-            op = Prompt.ask("Escolha")
+            opcao = Prompt.ask("Escolha")
 
-            if op == "1":
+            if opcao == "1":
                 menu_estoque()
-            elif op == "2":
+            elif opcao == "2":
                 menu_receitas()
-            elif op == "3":
+            elif opcao == "3":
                 menu_producao()
-            elif op == "4":
+            elif opcao == "4":
                 console.print("[bold red]Saindo...[/bold red]")
                 break
             else:
