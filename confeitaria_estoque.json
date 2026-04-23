@@ -1,5 +1,5 @@
 {
-    "estoque": {
+
       "farinha": 5000,
       "acucar": 4000,
       "ovos": 100,
@@ -7,5 +7,4 @@
       "fermento": 200,
       "chocolate": 1500,
       "manteiga": 500
-    }
-  }
+}
