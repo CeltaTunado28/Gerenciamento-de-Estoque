@@ -9,7 +9,7 @@ from rich.prompt import Prompt
 
 console = Console()
 
-ARQUIVO_ESTOQUE = "est.json"
+ARQUIVO_ESTOQUE = "estoque.json"
 ARQUIVO_RECEITAS = "receita.json"
 
 # =========================
