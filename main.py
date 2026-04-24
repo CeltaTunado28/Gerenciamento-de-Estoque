@@ -13,7 +13,7 @@ ARQUIVO_ESTOQUE = "estoque.json"
 ARQUIVO_RECEITAS = "receita.json"
 
 # =========================
-# MENU COM SETAS (CORRIGIDO)
+# MENU COM SETAS
 # =========================
 
 def menu_setas(opcoes, titulo=""):
